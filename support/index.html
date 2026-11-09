@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support · Teleprompter</title>
+  <meta name="description" content="Help and contact for Teleprompter for Video Camera.">
+  <link rel="icon" href="../assets/icon.png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="../"><img src="../assets/icon.png" alt="">Teleprompter</a>
+      <nav class="site">
+        <a href="../support/" aria-current="page">Support</a>
+        <a href="../privacy/">Privacy</a>
+        <a href="../terms/">Terms</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <h1>Support</h1>
+      <p class="lead">Found a bug, have a question or an idea? Check the answers below or write to me. I usually reply within two business days.</p>
+
+      <h2>Common questions</h2>
+
+      <details>
+        <summary>Voice scrolling doesn’t follow me</summary>
+        <div>
+          <p>Make sure the app has microphone and speech recognition access in iOS Settings → Teleprompter. Check that the voice language in the prompter matches the language you speak; the first time you use a language, its speech model may need to download over the internet. Recognition works best when the phone is within a couple of meters and the room is quiet.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>I don’t see the camera image</summary>
+        <div>
+          <p>Allow camera access in iOS Settings → Teleprompter. If access is blocked by Screen Time or a device profile, the prompter still works for reading, but recording is unavailable.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Where are my recordings?</summary>
+        <div>
+          <p>Recordings are saved to the Photos app. If nothing appears there, check that Teleprompter is allowed to add photos in iOS Settings → Teleprompter → Photos.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>My scripts don’t appear on my other device</summary>
+        <div>
+          <p>Scripts sync through iCloud. Check that both devices use the same Apple Account, iCloud Drive is on, and Teleprompter is allowed to use iCloud in iOS Settings → your name → iCloud. Sync can take a few minutes, and both devices need an internet connection.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>I bought Pro, but the app still shows the limit</summary>
+        <div>
+          <p>Open Settings in the app and tap “Restore Purchases”. Make sure you are signed in to the App Store with the Apple Account you used for the purchase.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>How do I cancel my subscription or get a refund?</summary>
+        <div>
+          <p>Subscriptions are managed by Apple: open iOS Settings → your name → Subscriptions → Teleprompter. After cancelling you keep Pro until the end of the paid period. Refunds are requested from Apple at <a href="https://reportaproblem.apple.com/">reportaproblem.apple.com</a>.</p>
+        </div>
+      </details>
+
+      <h2 id="contact">Contact me</h2>
+      <form id="support-form" novalidate>
+        <label>Topic
+          <select name="topic" required>
+            <option>Question</option>
+            <option>Bug report</option>
+            <option>Voice scrolling</option>
+            <option>Subscription or purchase</option>
+            <option>iCloud sync</option>
+            <option>Feature request</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <div class="row">
+          <label>Device <small>for example iPhone 16 Pro</small>
+            <input name="device" autocomplete="off" maxlength="80">
+          </label>
+          <label>iOS version <small>Settings → General → About</small>
+            <input name="ios" autocomplete="off" maxlength="20">
+          </label>
+          <label>App version <small>optional</small>
+            <input name="app" autocomplete="off" maxlength="20">
+          </label>
+        </div>
+
+        <label>Message
+          <textarea name="message" required maxlength="4000" placeholder="What happened, and what did you expect to happen?"></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="submit">Write email</button>
+          <span class="note">Opens your mail app with the message filled in. Nothing is sent from this page.</span>
+        </div>
+        <p class="note" id="form-error" role="alert" hidden>Please write a message first.</p>
+
+        <div class="fallback" id="fallback">
+          <p class="note">Mail app didn’t open? Send your message to <a href="mailto:nikitaarshinov01k@gmail.com">nikitaarshinov01k@gmail.com</a>.</p>
+          <div class="actions">
+            <button type="button" class="secondary" id="copy">Copy message</button>
+            <span class="note" id="copy-status" aria-live="polite"></span>
+          </div>
+        </div>
+      </form>
+      <p class="muted" style="margin-top:14px">Or write directly: <a href="mailto:nikitaarshinov01k@gmail.com">nikitaarshinov01k@gmail.com</a></p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <span>© 2026 Mikita Arshynau</span>
+      <a href="mailto:nikitaarshinov01k@gmail.com">nikitaarshinov01k@gmail.com</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var EMAIL = "nikitaarshinov01k@gmail.com";
+      var form = document.getElementById("support-form");
+      var error = document.getElementById("form-error");
+      var fallback = document.getElementById("fallback");
+      var copyStatus = document.getElementById("copy-status");
+
+      // The app can prefill fields: support/?app=1.0&ios=18.1&device=iPhone17,1&topic=Bug%20report
+      var params = new URLSearchParams(location.search);
+      ["app", "ios", "device"].forEach(function (key) {
+        if (params.get(key)) form.elements[key].value = params.get(key).slice(0, 80);
+      });
+      var topic = params.get("topic");
+      if (topic) {
+        Array.prototype.forEach.call(form.elements.topic.options, function (o) {
+          if (o.text === topic) form.elements.topic.value = o.text;
+        });
+      }
+
+      function composeBody() {
+        var f = form.elements;
+        var lines = [f.message.value.trim(), "", "—"];
+        lines.push("Device: " + (f.device.value.trim() || "—"));
+        lines.push("iOS: " + (f.ios.value.trim() || "—"));
+        lines.push("App: " + (f.app.value.trim() || "—"));
+        return lines.join("\n");
+      }
+
+      function subject() {
+        return "Teleprompter: " + form.elements.topic.value;
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        if (!form.elements.message.value.trim()) {
+          error.hidden = false;
+          form.elements.message.focus();
+          return;
+        }
+        error.hidden = true;
+        location.href = "mailto:" + EMAIL +
+          "?subject=" + encodeURIComponent(subject()) +
+          "&body=" + encodeURIComponent(composeBody());
+        setTimeout(function () { fallback.classList.add("visible"); }, 1200);
+      });
+
+      document.getElementById("copy").addEventListener("click", function () {
+        var text = "Subject: " + subject() + "\n\n" + composeBody();
+        try {
+          navigator.clipboard.writeText(text).then(function () {
+            copyStatus.textContent = "Copied.";
+          }, function () {
+            copyStatus.textContent = "Couldn’t copy. Select the text in the form instead.";
+          });
+        } catch (e) {
+          copyStatus.textContent = "Couldn’t copy. Select the text in the form instead.";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
